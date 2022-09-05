@@ -1,7 +1,12 @@
+import java.io.IOException;
+import java.net.*;
 import java.util.Scanner;
 
 public class Client {
-  public static void main (String[] args) {
+  public static void main (String[] args) throws IOException {
+    String[] testInputs = {"localhost","8080", "8090"};
+    args = testInputs;
+
     String hostAddress;
     int tcpPort;
     int udpPort;
@@ -39,9 +44,26 @@ public class Client {
       } else if (tokens[0].equals("list")) {
         // TODO: send appropriate command to the server and display the
         // appropriate responses form the server
+        System.out.println("You typed list!");
+        String response = sendUDPRequest("list", hostAddress, udpPort);
+        System.out.println(response);
       } else {
         System.out.println("ERROR: No such command");
       }
     }
+  }
+
+  public static String sendUDPRequest(String requestParameters, String hostAddress, int udpPort) throws IOException {
+    DatagramSocket socket = new DatagramSocket();
+    InetAddress address = InetAddress.getByName(hostAddress);
+    byte[] buf = requestParameters.getBytes();
+
+    DatagramPacket packet = new DatagramPacket(buf, buf.length, address, udpPort);
+    socket.send(packet);
+    packet = new DatagramPacket(buf, buf.length);
+    socket.receive(packet);
+    String serverResponse = new String(packet.getData(), 0, packet.getLength());
+    socket.close();
+    return serverResponse;
   }
 }
