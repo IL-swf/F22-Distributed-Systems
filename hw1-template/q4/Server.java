@@ -39,25 +39,10 @@ public class Server {
       inventory.put(nextItem, nextQuantity);
     }
 
-    //System.out.println(inventory);
+    Thread udpThread = new DatagramServer(1024, udpPort);
+    udpThread.start();
 
-    // UDP DATAGRAM SERVER
-    DatagramPacket datapacket, returnpacket;
-    int len = 1024;
-    try {
-      DatagramSocket datasocket = new DatagramSocket(udpPort);
-      byte[] buf = new byte[len];
-      while (true) {
-        datapacket = new DatagramPacket(buf, buf.length);
-        datasocket.receive(datapacket);
-        returnpacket = handleRequest(datapacket);
-        datasocket.send(returnpacket);
-      }
-    } catch (SocketException e) {
-      System.err.println(e);
-    } catch (IOException e) {
-      System.err.println(e);
-    }
+    //System.out.println(inventory);
 
     // TODO: handle request from clients
   }
@@ -79,5 +64,37 @@ public class Server {
             clientRequest.getAddress(),
             clientRequest.getPort());
     return returnDatagramPacket;
+  }
+
+  public static class DatagramServer extends Thread {
+    int len;
+    int udpPort;
+    DatagramPacket datapacket, returnpacket;
+
+    public DatagramServer(int packetLength, int port) {
+      len = packetLength;
+      udpPort = port;
+    }
+
+    public void run() {
+      try {
+        DatagramSocket datasocket = new DatagramSocket(udpPort);
+        byte[] buf = new byte[len];
+        while (true) {
+          datapacket = new DatagramPacket(buf, buf.length);
+          datasocket.receive(datapacket);
+          returnpacket = handleRequest(datapacket);
+          datasocket.send(returnpacket);
+        }
+      } catch (SocketException e) {
+        System.err.println(e);
+      } catch (IOException e) {
+        System.err.println(e);
+      }
+    }
+  }
+
+  public class TCPServer extends Thread {
+
   }
 }
