@@ -1,21 +1,16 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.io.*;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Server {
-  public static void main(String[] args) throws FileNotFoundException {
-    String[] testInputs = {"8080", "8090", "C:\\Users\\betty\\IdeaProjects\\F22-Distributed-Systems\\hw1-template\\q4\\input\\inventory.txt"};
-    args = testInputs;
 
-    int tcpPort;
-    int udpPort;
+  static int tcpPort;
+  static int udpPort;
 
-    HashMap inventory = new HashMap<String, Integer>();
+  static HashMap<String, Integer> inventory = new HashMap<>();
+
+  public static void main(String[] args) throws Exception {
 
     if (args.length != 3) {
       System.out.println("ERROR: Provide 3 arguments");
@@ -39,62 +34,111 @@ public class Server {
       inventory.put(nextItem, nextQuantity);
     }
 
-    Thread udpThread = new DatagramServer(1024, udpPort);
+    DatagramSocket clientSocket = new DatagramSocket(udpPort);
+    Thread udpThread = new DatagramServer(clientSocket);
     udpThread.start();
+
+    ServerSocket serverSocket = new ServerSocket(tcpPort);
+    Thread tcpThread = new TCPServer(serverSocket);
+    tcpThread.start();
 
     //System.out.println(inventory);
 
     // TODO: handle request from clients
   }
 
-  public static DatagramPacket handleRequest(DatagramPacket clientRequest) {
-    Scanner clientScanner = new Scanner(new String(clientRequest.getData(), 0, clientRequest.getLength()));
+  public static String handleRequest(String clientRequest) {
+    Scanner clientScanner = new Scanner(clientRequest);
     while (clientScanner.hasNext()) {
       switch (clientScanner.next()) {
-        case "purchase" -> System.out.println("SERVER: Purchase Request");
-        case "cancel" -> System.out.println("SERVER: Cancel Request");
-        case "search" -> System.out.println("SERVER: Search Request");
-        case "list" -> System.out.println("SERVER: List Request");
+        case "purchase" -> {
+          System.out.println("SERVER: Purchase Request");
+          String userName = clientScanner.next();
+          String product = clientScanner.next();
+          int quantity = clientScanner.nextInt();
+
+          return clientRequest;
+        }
+        case "cancel" -> {
+          System.out.println("SERVER: Cancel Request");
+          return clientRequest;
+        }
+        case "search" -> {
+          System.out.println("SERVER: Search Request");
+          return clientRequest;
+        }
+        case "list" -> {
+          System.out.println("SERVER: List Request");
+          return inventory.toString();
+        }
       }
     }
-
-    DatagramPacket returnDatagramPacket = new DatagramPacket(
-            clientRequest.getData(),
-            clientRequest.getLength(),
-            clientRequest.getAddress(),
-            clientRequest.getPort());
-    return returnDatagramPacket;
+    return clientRequest;
   }
 
   public static class DatagramServer extends Thread {
-    int len;
-    int udpPort;
+    DatagramSocket clientSocket;
     DatagramPacket datapacket, returnpacket;
+    int counter = 0;
 
-    public DatagramServer(int packetLength, int port) {
-      len = packetLength;
-      udpPort = port;
+    public DatagramServer(DatagramSocket clientSocket) {
+      this.clientSocket = clientSocket;
+      counter++;
+      System.out.println("UDP Thread: " + counter);
     }
 
     public void run() {
       try {
-        DatagramSocket datasocket = new DatagramSocket(udpPort);
-        byte[] buf = new byte[len];
+        byte[] buf = new byte[1024];
         while (true) {
           datapacket = new DatagramPacket(buf, buf.length);
-          datasocket.receive(datapacket);
-          returnpacket = handleRequest(datapacket);
-          datasocket.send(returnpacket);
+          clientSocket.receive(datapacket);
+          String clientRequest = new String(datapacket.getData(), 0, datapacket.getLength());
+          String serverResponse = handleRequest(clientRequest);
+          returnpacket = new DatagramPacket(
+                  serverResponse.getBytes(),
+                  serverResponse.getBytes().length,
+                  datapacket.getAddress(),
+                  datapacket.getPort());
+          clientSocket.send(returnpacket);
         }
-      } catch (SocketException e) {
-        System.err.println(e);
       } catch (IOException e) {
         System.err.println(e);
+      } finally {
+        clientSocket.close();
       }
     }
   }
 
-  public class TCPServer extends Thread {
+  public static class TCPServer extends Thread {
+    ServerSocket serverSocket;
 
+    public TCPServer(ServerSocket serverSocket){
+      this.serverSocket = serverSocket;
+      System.out.println("TCP Thread");
+    }
+
+    public void run() {
+
+      try {
+        System.out.println("Waiting for client");
+        Socket clientSocket = serverSocket.accept();
+        System.out.println("Connected to client: " + clientSocket.toString());
+
+        BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream(), true);
+
+        String clientRequest = fromClient.readLine();
+
+        String serverResponse = handleRequest(clientRequest);
+        toClient.println(serverResponse);
+
+        fromClient.close();
+        toClient.close();
+        clientSocket.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
   }
 }

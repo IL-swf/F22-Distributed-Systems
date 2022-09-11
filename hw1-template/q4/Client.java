@@ -1,12 +1,12 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.*;
 import java.util.Scanner;
 
 public class Client {
   public static void main (String[] args) throws IOException {
-    String[] testInputs = {"localhost","8080", "8090"};
-    args = testInputs;
-
     String hostAddress;
     int tcpPort;
     int udpPort;
@@ -45,7 +45,8 @@ public class Client {
         // TODO: send appropriate command to the server and display the
         // appropriate responses form the server
         System.out.println("You typed list!");
-        String response = sendUDPRequest("list", hostAddress, udpPort);
+        //String response = sendUDPRequest("list", hostAddress, udpPort);
+        String response = sendTCPRequest("list", hostAddress, tcpPort);
         System.out.println(response);
       } else {
         System.out.println("ERROR: No such command");
@@ -60,10 +61,32 @@ public class Client {
 
     DatagramPacket packet = new DatagramPacket(buf, buf.length, address, udpPort);
     socket.send(packet);
-    packet = new DatagramPacket(buf, buf.length);
-    socket.receive(packet);
-    String serverResponse = new String(packet.getData(), 0, packet.getLength());
+    buf = new byte[1024];
+    DatagramPacket received = new DatagramPacket(buf, 1024);
+    socket.receive(received);
+    String serverResponse = new String(received.getData(), 0, received.getLength());
     socket.close();
     return serverResponse;
   }
+
+  public static String sendTCPRequest(String requestParameters, String hostAddress, int tcpPort) throws IOException {
+    Socket serverSocket = new Socket(InetAddress.getByName(hostAddress), tcpPort);
+
+    System.out.println("Connected to Server: " + serverSocket.toString());
+
+    PrintWriter toServer = new PrintWriter(serverSocket.getOutputStream(), true);
+    BufferedReader fromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+
+    toServer.println(requestParameters);
+    toServer.println(requestParameters);
+    toServer.println(requestParameters);
+    toServer.println(requestParameters);
+
+    //toServer.println(requestParameters);
+    String serverResponse = fromServer.readLine();
+    System.out.println(serverResponse);
+
+    return serverResponse;
+  }
 }
+
