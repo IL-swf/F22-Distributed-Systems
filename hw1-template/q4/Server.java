@@ -129,10 +129,13 @@ public class Server {
         PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
         String clientRequest = fromClient.readLine();
-        System.out.println(clientRequest);
 
         String serverResponse = handleRequest(clientRequest);
         toClient.println(serverResponse);
+
+        clientSocket.close();
+        toClient.close();
+        fromClient.close();
       } catch (IOException e) {
         e.printStackTrace();
       }

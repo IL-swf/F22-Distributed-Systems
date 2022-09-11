@@ -80,6 +80,9 @@ public class Client {
     toServer.println(requestParameters);
     String serverResponse = fromServer.readLine();
 
+    serverSocket.close();
+    toServer.close();
+    fromServer.close();
     return serverResponse;
   }
 }
