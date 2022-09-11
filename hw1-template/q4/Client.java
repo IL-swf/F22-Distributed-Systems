@@ -78,13 +78,7 @@ public class Client {
     BufferedReader fromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 
     toServer.println(requestParameters);
-    toServer.println(requestParameters);
-    toServer.println(requestParameters);
-    toServer.println(requestParameters);
-
-    //toServer.println(requestParameters);
     String serverResponse = fromServer.readLine();
-    System.out.println(serverResponse);
 
     return serverResponse;
   }
