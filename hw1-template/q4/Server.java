@@ -34,13 +34,16 @@ public class Server {
       inventory.put(nextItem, nextQuantity);
     }
 
-    DatagramSocket clientSocket = new DatagramSocket(udpPort);
-    Thread udpThread = new DatagramServer(clientSocket);
+    DatagramSocket clientUDPSocket = new DatagramSocket(udpPort);
+    Thread udpThread = new DatagramServer(clientUDPSocket);
     udpThread.start();
 
     ServerSocket serverSocket = new ServerSocket(tcpPort);
-    Thread tcpThread = new TCPServer(serverSocket);
-    tcpThread.start();
+    while (true) {
+      Socket clientTCPSocket = serverSocket.accept();
+      TCPServer tcpServer = new TCPServer(clientTCPSocket);
+      tcpServer.start();
+    }
 
     //System.out.println(inventory);
 
@@ -79,12 +82,10 @@ public class Server {
   public static class DatagramServer extends Thread {
     DatagramSocket clientSocket;
     DatagramPacket datapacket, returnpacket;
-    int counter = 0;
 
     public DatagramServer(DatagramSocket clientSocket) {
       this.clientSocket = clientSocket;
-      counter++;
-      System.out.println("UDP Thread: " + counter);
+      System.out.println("UDP Server running");
     }
 
     public void run() {
@@ -111,18 +112,16 @@ public class Server {
   }
 
   public static class TCPServer extends Thread {
-    ServerSocket serverSocket;
+    Socket clientSocket;
 
-    public TCPServer(ServerSocket serverSocket){
-      this.serverSocket = serverSocket;
-      System.out.println("TCP Thread");
+    public TCPServer(Socket clientSocket){
+      this.clientSocket = clientSocket;
+      System.out.println("New TCP Thread");
     }
 
     public void run() {
 
       try {
-        System.out.println("Waiting for client");
-        Socket clientSocket = serverSocket.accept();
         System.out.println("Connected to client: " + clientSocket.toString());
 
         BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
