@@ -1,0 +1,26 @@
+
+^
+java:S1226"AIntroduce a new variable instead of reusing the parameter "args".(úêÛô8ßÆßí²0
+i
+java:S20959"LUse try-with-resources or close this "DatagramSocket" in a "finally" clause.(ıå£†8ªÇßí²0
+V
+java:S1854";Remove this useless assignment to local variable "tcpPort".(üûôãÿÿÿÿÿ
+G
+java:S1481",Remove this unused "tcpPort" local variable.(«ıæéüÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(ŸŠæ¦
+S	java:S106"9Replace this use of System.out or System.err by a logger.(†¨´®şÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(Î®Õã
+S	java:S106"9Replace this use of System.out or System.err by a logger.(ƒ†ÛÙûÿÿÿÿ
+M
+java:S1135 "2Complete the task associated to this TODO comment.(Òøİ½ùÿÿÿÿ
+M
+java:S1135$"2Complete the task associated to this TODO comment.(ÿ³Àùÿÿÿÿ
+M
+java:S1135'"2Complete the task associated to this TODO comment.(ÿ³Àùÿÿÿÿ
+M
+java:S1135*"2Complete the task associated to this TODO comment.(ÿ³Àùÿÿÿÿ
+Z	java:S106/"9Replace this use of System.out or System.err by a logger.(¢´ƒÌúÿÿÿÿ8ÕÇßí²0
+M
+java:S1135-"2Complete the task associated to this TODO comment.(ÿ³Àùÿÿÿÿ
+Z	java:S1061"9Replace this use of System.out or System.err by a logger.(˜Š¿Ûüÿÿÿÿ8ÖÇßí²0
+N	java:S1063"9Replace this use of System.out or System.err by a logger.(Í±ÃŞ

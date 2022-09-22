@@ -1,0 +1,9 @@
+
+0
+java:S1220""Move this file to a named package.
+`
+java:S2095"EUse try-with-resources or close this "Scanner" in a "finally" clause.(íªåÀıÿÿÿÿ
+P
+java:S1161	":Add the "@Override" annotation above this method signature(“–ış
+N	java:S106"9Replace this use of System.out or System.err by a logger.(çÒ©
+S	java:S106$"9Replace this use of System.out or System.err by a logger.(Şàš¬øÿÿÿÿ
