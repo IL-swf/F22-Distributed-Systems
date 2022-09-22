@@ -35,7 +35,7 @@
     (List<Orders.toString()> orders) 
     **** order.toString returns: orderId + ", " + productName + ", "+ quantity ****
 #### Example:
-    "'2, phone, 1', '7, laptop, 2'"
+    "['2, phone, 1', '7, laptop, 2']"
 #### Response on Failure:
     (String failureMessage, String userName)
 #### Example:

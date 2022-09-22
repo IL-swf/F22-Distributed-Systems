@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Server {
 
@@ -11,7 +10,7 @@ public class Server {
   static final String ORDERS_FILE_PATH = "C:\\\\Users\\\\betty\\\\IdeaProjects\\\\F22-Distributed-Systems\\\\hw1-template\\\\q4\\\\input\\\\orders.txt";
 
   static HashMap<String, Integer> inventory = new HashMap<>();
-  static HashMap<String, Order> orders = new HashMap<>();
+  static HashMap<Integer, Order> orders = new HashMap<>();
 
   public static void main(String[] args) throws Exception {
 
@@ -45,9 +44,10 @@ public class Server {
       int orderId = fileInput.nextInt();
       String productName = fileInput.next();
       String quantity = fileInput.next();
+      String status = fileInput.next();
 
-      Order order = new Order(orderId, userName, productName, Integer.parseInt(quantity));
-      orders.put(userName, order);
+      Order order = new Order(orderId, userName, productName, Integer.parseInt(quantity), Order.OrderStatus.valueOf(status));
+      orders.put(order.orderId, order);
       currentOrderId = Math.max(currentOrderId, orderId);
     }
 
@@ -61,35 +61,51 @@ public class Server {
       TCPServer tcpServer = new TCPServer(clientTCPSocket);
       tcpServer.start();
     }
-
-    //System.out.println(inventory);
-
-    // TODO: handle request from clients
   }
 
   public static String handleRequest(String clientRequest) {
     Scanner clientScanner = new Scanner(clientRequest);
     while (clientScanner.hasNext()) {
       switch (clientScanner.next()) {
+
         case "purchase" -> {
           System.out.println("SERVER: Purchase Request");
+
           String userName = clientScanner.next();
           String product = clientScanner.next();
           int quantity = clientScanner.nextInt();
 
           return processPurchase(userName, product, quantity);
         }
+
         case "cancel" -> {
           System.out.println("SERVER: Cancel Request");
-          return clientRequest;
+
+          int orderId = clientScanner.nextInt();
+
+          return processCancel(orderId);
         }
+
         case "search" -> {
           System.out.println("SERVER: Search Request");
-          return clientRequest;
+
+          String userName = clientScanner.next();
+
+          List<String> userOrders = processSearch(userName);
+
+          if (userOrders.isEmpty()) return "No order found for " + userName;
+
+          return userOrders.toString();
         }
+
         case "list" -> {
           System.out.println("SERVER: List Request");
-          return inventory.toString();
+
+          final String[] inventoryResponse = {""};
+
+          inventory.forEach((productName, quantity) -> inventoryResponse[0] = inventoryResponse[0].concat(productName + " " + quantity + " "));
+
+          return inventoryResponse[0];
         }
       }
     }
@@ -101,9 +117,30 @@ public class Server {
     if (inventory.get(productName) < quantity) return "Not Available - Not enough items";
 
     Order thisOrder = orderFactory(userName, productName, quantity);
-    orders.put(userName, thisOrder);
+    orders.put(thisOrder.orderId, thisOrder);
+    inventory.compute(productName, (key, value) -> value - quantity);
 
     return String.format("Your order has been placed, %d %s %s %d", thisOrder.orderId, userName, productName, quantity);
+  }
+
+  public static String processCancel(int orderId) {
+    if (!orders.containsKey(orderId)) return orderId + " not found, no such order";
+
+    Order order = orders.get(orderId);
+    order.orderStatus = Order.OrderStatus.CANCELLED;
+    orders.put(orderId, order);
+
+    inventory.compute(order.productName, (key, value) -> value + order.quantity);
+
+    return "Order " + orderId + " is cancelled";
+  }
+
+  public static List<String> processSearch(String userName) {
+    List<String> userOrders = new ArrayList<>();
+    orders.forEach((orderId, order) -> {
+      if (order.userName == userName) userOrders.add(order.toString());
+    });
+    return userOrders;
   }
 
   public static Order orderFactory(String userName, String productName, int quantity) {
@@ -116,12 +153,24 @@ public class Server {
     String userName;
     String productName;
     int quantity;
+    OrderStatus orderStatus;
+
+    public enum OrderStatus {ACTIVE, COMPLETE, CANCELLED}
 
     public Order(int orderId, String userName, String productName, int quantity) {
       this.orderId = orderId;
       this.userName = userName;
       this.productName = productName;
       this.quantity = quantity;
+      this.orderStatus = OrderStatus.ACTIVE;
+    }
+
+    public Order(int orderId, String userName, String productName, int quantity, OrderStatus orderStatus) {
+      this.orderId = orderId;
+      this.userName = userName;
+      this.productName = productName;
+      this.quantity = quantity;
+      this.orderStatus = orderStatus;
     }
 
     @Override
@@ -146,7 +195,9 @@ public class Server {
           datapacket = new DatagramPacket(buf, buf.length);
           clientSocket.receive(datapacket);
           String clientRequest = new String(datapacket.getData(), 0, datapacket.getLength());
+
           String serverResponse = handleRequest(clientRequest);
+
           returnpacket = new DatagramPacket(
                   serverResponse.getBytes(),
                   serverResponse.getBytes().length,
