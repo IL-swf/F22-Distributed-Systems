@@ -7,8 +7,11 @@ public class Server {
 
   static int tcpPort;
   static int udpPort;
+  static int currentOrderId = 0;
+  static final String ORDERS_FILE_PATH = "C:\\\\Users\\\\betty\\\\IdeaProjects\\\\F22-Distributed-Systems\\\\hw1-template\\\\q4\\\\input\\\\orders.txt";
 
   static HashMap<String, Integer> inventory = new HashMap<>();
+  static HashMap<String, Order> orders = new HashMap<String, Order>();
 
   public static void main(String[] args) throws Exception {
 
@@ -24,7 +27,7 @@ public class Server {
     udpPort = Integer.parseInt(args[1]);
     String fileName = args[2];
 
-    // parse the inventory file
+    // Load the inventory file
     File inventoryInput = new File(fileName);
     Scanner fileInput = new Scanner(inventoryInput);
     while (fileInput.hasNext()) {
@@ -32,6 +35,20 @@ public class Server {
       int nextQuantity = fileInput.nextInt();
 
       inventory.put(nextItem, nextQuantity);
+    }
+
+    // Load the orders file
+    File ordersInput = new File(ORDERS_FILE_PATH);
+    fileInput = new Scanner(ordersInput);
+    while (fileInput.hasNext()) {
+      String userName = fileInput.next();
+      int orderId = fileInput.nextInt();
+      String productName = fileInput.next();
+      String quantity = fileInput.next();
+
+      Order order = new Order(orderId, userName, productName, Integer.parseInt(quantity));
+      orders.put(userName, order);
+      currentOrderId = Math.max(currentOrderId, orderId);
     }
 
     DatagramSocket clientUDPSocket = new DatagramSocket(udpPort);
@@ -60,6 +77,12 @@ public class Server {
           String product = clientScanner.next();
           int quantity = clientScanner.nextInt();
 
+          // TODO: Check inventory of Product against quantity requested
+          // TODO: If Q > IoP send 'Not Available - Not enough items'
+          // TODO: If Requested Product isn't in Inventory send 'Not Available - We do not sell this product'
+          // TODO: If valid order: CreateOrder(), orders.put(newOrder), send
+          //              'Your order has been placed, orderId userName productName quantity'
+
           return clientRequest;
         }
         case "cancel" -> {
@@ -77,6 +100,31 @@ public class Server {
       }
     }
     return clientRequest;
+  }
+
+  public static Order orderFactory(String userName, String productName, int quantity) {
+    currentOrderId++;
+    Order newOrder = new Order(currentOrderId, userName, productName, quantity);
+    return newOrder;
+  }
+
+  public static class Order {
+    int orderId;
+    String userName;
+    String productName;
+    int quantity;
+
+    public Order(int orderId, String userName, String productName, int quantity) {
+      this.orderId = orderId;
+      this.userName = userName;
+      this.productName = productName;
+      this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+      return orderId + ", " + productName + ", "+ quantity;
+    }
   }
 
   public static class DatagramServer extends Thread {
