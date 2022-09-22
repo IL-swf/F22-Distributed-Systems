@@ -1,0 +1,26 @@
+
+o
+java:S2293	"YReplace the type specification in this constructor call with the diamond operator ("<>").(Ç¨å’
+t
+java:S2293*"YReplace the type specification in this constructor call with the diamond operator ("<>").(–é¸‚ûÿÿÿÿ
+f
+java:S1104"PMake myId a static final constant or non-public and provide accessors if needed.(ÂÇ¨ö
+c
+java:S1104"MMake n a static final constant or non-public and provide accessors if needed.(ûûŞ“
+l
+java:S1104"WMake appFinished a static final constant or non-public and provide accessors if needed.(€‚Œ
+k
+java:S1104	"UMake neighbors a static final constant or non-public and provide accessors if needed.(Ç¨å’
+f
+java:S1104
+"PMake prop a static final constant or non-public and provide accessors if needed.(ûá…‰
+0
+java:S1220""Move this file to a named package.
+œ
+java:S11864"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(‰¶˜¨ûÿÿÿÿ
+œ
+java:S1186>"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(¢˜¥øÿÿÿÿ
+E
+java:S1197"*Move the array designators [] to the type.(ºÀìÊıÿÿÿÿ
+S	java:S106#"9Replace this use of System.out or System.err by a logger.(›ş–‚ıÿÿÿÿ
+S	java:S106/"9Replace this use of System.out or System.err by a logger.(ÜÈğ¢ÿÿÿÿÿ

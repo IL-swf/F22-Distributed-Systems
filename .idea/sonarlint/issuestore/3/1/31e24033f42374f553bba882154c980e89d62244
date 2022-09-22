@@ -1,0 +1,8 @@
+
+e	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(€§Ÿ
+c
+java:S3973"HUse indentation to denote the code conditionally executed by this "for".(ËËªâþÿÿÿÿ
+^
+java:S3973"HUse indentation to denote the code conditionally executed by this "for".(¥Ââ²
+a	java:S116"LRename this field "M" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Î½¡þ
+f	java:S116"LRename this field "N" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(±¢ÓÛüÿÿÿÿ

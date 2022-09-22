@@ -1,0 +1,40 @@
+
+Q
+java:S3740"/Provide the parametrized type for this generic.(Ÿæ¶–ÿÿÿÿÿ8´É‡ï²0
+‰
+java:S1488="lImmediately return this expression instead of assigning it to the temporary variable "returnDatagramPacket".(Íã÷Š8¶É‡ï²0
+^
+java:S1226"AIntroduce a new variable instead of reusing the parameter "args".(úêÛô8½É‡ï²0
+g
+java:S2095""EUse try-with-resources or close this "Scanner" in a "finally" clause.(¤¦‰Ïøÿÿÿÿ8€Ê‡ï²0
+a
+java:S20953"EUse try-with-resources or close this "Scanner" in a "finally" clause.(¶»Ê98€Ê‡ï²0
+i
+java:S2095Q"LUse try-with-resources or close this "DatagramSocket" in a "finally" clause.(´øçŠ8€Ê‡ï²0
+]
+java:S1854";Remove this useless assignment to local variable "tcpPort".(¯ÛÔ›ýÿÿÿÿ8ƒÊ‡ï²0
+N
+java:S1481",Remove this unused "tcpPort" local variable.(«ýæéüÿÿÿÿ8„Ê‡ï²0
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ŸŠæ¦8†Ê‡ï²0
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ôìæ¬8‡Ê‡ï²0
+U	java:S106"9Replace this use of System.out or System.err by a logger.(¹¦¥¬8ˆÊ‡ï²0
+U	java:S106"9Replace this use of System.out or System.err by a logger.(Ü¹ã…8ˆÊ‡ï²0
+X	java:S125-"<This block of commented-out lines of code should be removed.(Èöþ¨8ŽÊ‡ï²0
+T
+java:S1135/"2Complete the task associated to this TODO comment.(îî·üÿÿÿÿ8ŽÊ‡ï²0
+C	java:S1315""Add a default case to this switch.(¾ ýíþÿÿÿÿ8‘Ê‡ï²0
+Z	java:S1066"9Replace this use of System.out or System.err by a logger.(©äÉÔûÿÿÿÿ8’Ê‡ï²0
+T	java:S1067"9Replace this use of System.out or System.err by a logger.(‡ð¦X8’Ê‡ï²0
+U	java:S1068"9Replace this use of System.out or System.err by a logger.(Äµ³æ8“Ê‡ï²0
+Z	java:S1069"9Replace this use of System.out or System.err by a logger.(ñÑ±–ýÿÿÿÿ8“Ê‡ï²0
+G
+java:S1659H"*Declare "returnpacket" on a separate line.(¬ÆôŸ8•Ê‡ï²0
+W
+java:S1161O":Add the "@Override" annotation above this method signature(“–ýþ8–Ê‡ï²0
+a
+java:S2147\"DCombine this catch with the one at line 90, which has the same body.(ï­£Ä8—Ê‡ï²0
+U	java:S106X"9Replace this use of System.out or System.err by a logger.(•„ˆß8§™®ï²0
+Z	java:S106["9Replace this use of System.out or System.err by a logger.(Þàš¬øÿÿÿÿ8™Ê‡ï²0
+Z	java:S106]"9Replace this use of System.out or System.err by a logger.(Þàš¬øÿÿÿÿ8™Ê‡ï²0
+b
+java:S2134b"@Don't extend "Thread", since the "run" method is not overridden.(ïòñŽûÿÿÿÿ8™Ê‡ï²0
