@@ -11,7 +11,7 @@ public class Server {
   static final String ORDERS_FILE_PATH = "C:\\\\Users\\\\betty\\\\IdeaProjects\\\\F22-Distributed-Systems\\\\hw1-template\\\\q4\\\\input\\\\orders.txt";
 
   static HashMap<String, Integer> inventory = new HashMap<>();
-  static HashMap<String, Order> orders = new HashMap<String, Order>();
+  static HashMap<String, Order> orders = new HashMap<>();
 
   public static void main(String[] args) throws Exception {
 
@@ -77,13 +77,7 @@ public class Server {
           String product = clientScanner.next();
           int quantity = clientScanner.nextInt();
 
-          // TODO: Check inventory of Product against quantity requested
-          // TODO: If Q > IoP send 'Not Available - Not enough items'
-          // TODO: If Requested Product isn't in Inventory send 'Not Available - We do not sell this product'
-          // TODO: If valid order: CreateOrder(), orders.put(newOrder), send
-          //              'Your order has been placed, orderId userName productName quantity'
-
-          return clientRequest;
+          return processPurchase(userName, product, quantity);
         }
         case "cancel" -> {
           System.out.println("SERVER: Cancel Request");
@@ -99,13 +93,22 @@ public class Server {
         }
       }
     }
-    return clientRequest;
+    return "Sorry. \"" + clientRequest + "\" wasn't a valid request.";
+  }
+
+  public static String processPurchase(String userName, String productName, int quantity) {
+    if (!inventory.containsKey(productName)) return "Not Available - We do not sell this product";
+    if (inventory.get(productName) < quantity) return "Not Available - Not enough items";
+
+    Order thisOrder = orderFactory(userName, productName, quantity);
+    orders.put(userName, thisOrder);
+
+    return String.format("Your order has been placed, %d %s %s %d", thisOrder.orderId, userName, productName, quantity);
   }
 
   public static Order orderFactory(String userName, String productName, int quantity) {
     currentOrderId++;
-    Order newOrder = new Order(currentOrderId, userName, productName, quantity);
-    return newOrder;
+    return new Order(currentOrderId, userName, productName, quantity);
   }
 
   public static class Order {
