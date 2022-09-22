@@ -7,13 +7,16 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Client {
+    static String hostAddress;
+    static int tcpPort;
+    static int udpPort;
+    static boolean tcpMode = true;
+
     public static void main(String[] args) throws IOException {
-        String hostAddress;
-        int tcpPort;
-        int udpPort;
-        boolean tcpMode = true;
+
 
         if (args.length != 3) {
             System.out.println("ERROR: Provide 3 arguments");
@@ -45,18 +48,23 @@ public class Client {
             } else if (tokens[0].equals("purchase")) {
                 // TODO: send appropriate command to the server and display the
                 // appropriate responses form the server
+                String response = sendRequest(cmd);
+                System.out.println(response);
             } else if (tokens[0].equals("cancel")) {
                 // TODO: send appropriate command to the server and display the
                 // appropriate responses form the server
+                String response = sendRequest(cmd);
+                System.out.println(response);
             } else if (tokens[0].equals("search")) {
                 // TODO: send appropriate command to the server and display the
                 // appropriate responses form the server
+                String response = sendRequest(cmd);
+                System.out.println(response);
             } else if (tokens[0].equals("list")) {
                 // TODO: send appropriate command to the server and display the
                 // appropriate responses form the server
-                System.out.println("You typed list!");
                 //String response = sendUDPRequest("list", hostAddress, udpPort);
-                String response = sendTCPRequest("list", hostAddress, tcpPort);
+                String response = sendRequest(cmd);
                 System.out.println(response);
             } else {
                 System.out.println("ERROR: No such command");
@@ -64,7 +72,14 @@ public class Client {
         }
     }
 
-    public static String sendUDPRequest(String requestParameters, String hostAddress, int udpPort) throws IOException {
+    public static String sendRequest(String requestParameters) throws IOException {
+        if (tcpMode) {
+            return sendTCPRequest(requestParameters);
+        }
+        return sendUDPRequest(requestParameters);
+    }
+
+    public static String sendUDPRequest(String requestParameters) throws IOException {
         DatagramSocket socket = new DatagramSocket();
         InetAddress address = InetAddress.getByName(hostAddress);
         byte[] buf = requestParameters.getBytes();
@@ -79,16 +94,14 @@ public class Client {
         return serverResponse;
     }
 
-    public static String sendTCPRequest(String requestParameters, String hostAddress, int tcpPort) throws IOException {
+    public static String sendTCPRequest(String requestParameters) throws IOException {
         Socket serverSocket = new Socket(InetAddress.getByName(hostAddress), tcpPort);
-
-        System.out.println("Connected to Server: " + serverSocket.toString());
 
         PrintWriter toServer = new PrintWriter(serverSocket.getOutputStream(), true);
         BufferedReader fromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 
         toServer.println(requestParameters);
-        String serverResponse = fromServer.readLine();
+        String serverResponse = fromServer.lines().collect(Collectors.joining("\n"));
 
         serverSocket.close();
         toServer.close();

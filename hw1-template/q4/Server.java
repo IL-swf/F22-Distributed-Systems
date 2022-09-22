@@ -1,13 +1,14 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Server {
 
   static int tcpPort;
   static int udpPort;
   static int currentOrderId = 0;
-  static final String ORDERS_FILE_PATH = "C:\\\\Users\\\\betty\\\\IdeaProjects\\\\F22-Distributed-Systems\\\\hw1-template\\\\q4\\\\input\\\\orders.txt";
+  static final String ORDERS_FILE_PATH = "/Users/l2222310/Desktop/UT/distributed systems/F22-Distributed-Systems/hw1-template/q4/input/orders.txt";
 
   static HashMap<String, Integer> inventory = new HashMap<>();
   static HashMap<Integer, Order> orders = new HashMap<>();
@@ -32,9 +33,10 @@ public class Server {
     while (fileInput.hasNext()) {
       String nextItem = fileInput.next();
       int nextQuantity = fileInput.nextInt();
-
       inventory.put(nextItem, nextQuantity);
     }
+
+
 
     // Load the orders file
     File ordersInput = new File(ORDERS_FILE_PATH);
@@ -95,17 +97,25 @@ public class Server {
 
           if (userOrders.isEmpty()) return "No order found for " + userName;
 
-          return userOrders.toString();
+          String returnString = "";
+          returnString = returnString.concat(userOrders.stream().map(order -> order + "\n").collect(Collectors.joining()));
+
+          return returnString.trim();
         }
 
         case "list" -> {
           System.out.println("SERVER: List");
 
-          final String[] inventoryResponse = {""};
+          List<String> inventoryResponse = new ArrayList<>();;
 
-          inventory.forEach((productName, quantity) -> inventoryResponse[0] = inventoryResponse[0].concat(productName + " " + quantity + " "));
+          inventory.forEach((productName, quantity) -> inventoryResponse.add(productName + " " + quantity));
 
-          return inventoryResponse[0];
+          inventoryResponse.sort(null);
+
+          String returnString = "";
+          returnString = returnString.concat(inventoryResponse.stream().map(product -> product + "\n").collect(Collectors.joining()));
+
+          return returnString.trim();
         }
       }
     }
@@ -139,7 +149,7 @@ public class Server {
   public static List<String> processSearch(String userName) {
     List<String> userOrders = new ArrayList<>();
     orders.forEach((orderId, order) -> {
-      if (order.userName == userName) userOrders.add(order.toString());
+      if (order.userName.equals(userName) && order.orderStatus != Order.OrderStatus.CANCELLED) userOrders.add(order.toString());
     });
     return userOrders;
   }
@@ -225,8 +235,6 @@ public class Server {
     public void run() {
 
       try {
-        System.out.println("Connected to client: " + clientSocket.toString());
-
         BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
