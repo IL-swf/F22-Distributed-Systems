@@ -35,6 +35,8 @@ public class Client {
       else if (tokens[0].equals("purchase")) {
         // TODO: send appropriate command to the server and display the
         // appropriate responses form the server
+        String response = sendTCPRequest(String.format("%s %s %s %s", tokens[0], tokens[1], tokens[2], tokens[3] ), hostAddress, tcpPort);
+        System.out.println(response);
       } else if (tokens[0].equals("cancel")) {
         // TODO: send appropriate command to the server and display the
         // appropriate responses form the server

@@ -69,27 +69,27 @@ public class Server {
       switch (clientScanner.next()) {
 
         case "purchase" -> {
-          System.out.println("SERVER: Purchase Request");
-
           String userName = clientScanner.next();
           String product = clientScanner.next();
           int quantity = clientScanner.nextInt();
+
+          System.out.println("SERVER: Purchase: " + userName + " " + product + " " + quantity);
 
           return processPurchase(userName, product, quantity);
         }
 
         case "cancel" -> {
-          System.out.println("SERVER: Cancel Request");
-
           int orderId = clientScanner.nextInt();
+
+          System.out.println("SERVER: Cancel: " + orderId);
 
           return processCancel(orderId);
         }
 
         case "search" -> {
-          System.out.println("SERVER: Search Request");
-
           String userName = clientScanner.next();
+
+          System.out.println("SERVER: Search: " + userName);
 
           List<String> userOrders = processSearch(userName);
 
@@ -99,7 +99,7 @@ public class Server {
         }
 
         case "list" -> {
-          System.out.println("SERVER: List Request");
+          System.out.println("SERVER: List");
 
           final String[] inventoryResponse = {""};
 
@@ -117,6 +117,7 @@ public class Server {
     if (inventory.get(productName) < quantity) return "Not Available - Not enough items";
 
     Order thisOrder = orderFactory(userName, productName, quantity);
+
     orders.put(thisOrder.orderId, thisOrder);
     inventory.compute(productName, (key, value) -> value - quantity);
 
